@@ -64,6 +64,7 @@
 		<module>first-consul-server-1</module>
 		<module>first-getway</module>
 		<module>first-config-server</module>
+		<module>first-ribbon-consumer</module>
 	</modules>
 
 	<build>

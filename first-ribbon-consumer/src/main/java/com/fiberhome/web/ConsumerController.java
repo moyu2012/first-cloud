@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.fiberhome.client.ConsumerClient;
+import com.fiberhome.service.ConsumerService;
+
 @RestController
 public class ConsumerController {
 	@Autowired
@@ -32,6 +35,27 @@ public class ConsumerController {
 	@RequestMapping(value="/from", method = RequestMethod.GET)
 	public String from(){
 		return restTemplate.getForEntity("http://client/from",String.class).getBody();
+	}
+	
+	@Autowired
+	private ConsumerService consumerService;
+	
+	@RequestMapping(value="/from1",method=RequestMethod.GET)
+	public String from1(){
+		return consumerService.from();
+	}
+	
+	@RequestMapping(value="/from3",method=RequestMethod.GET)
+	public String from3(){
+		return consumerService.from3();
+	}
+	
+	@Autowired
+	private ConsumerClient consumerClient;
+	
+	@RequestMapping(value="/from2",method=RequestMethod.GET)
+	public String from2(){
+		return consumerClient.from();
 	}
 	
 }

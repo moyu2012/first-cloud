@@ -15,8 +15,8 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
+		<docker.image.prefix>first-aaa</docker.image.prefix>
+        <start-class>com.fiberhome.ConfigApplication</start-class>
 	</properties>
 
 	<dependencies>
@@ -44,4 +44,63 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${docker.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+                    <!-- 解决Connect to localhost:2375的问题的其中一种方式，注意要跟docker-machine env相一致 -->
+        				<dockerHost>https://192.168.99.100:2376</dockerHost>
+        				<dockerCertPath>C:\Users\xtf\.docker\machine\machines\default</dockerCertPath>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                    <!-- 以下两行是为了docker push到DockerHub使用的。 -->
+        			<serverId>docker-hub</serverId>
+        			<registryUrl>https://index.docker.io/v1/</registryUrl>
+                </configuration>
+                <dependencies>
+		        	<dependency>
+		            	<groupId>org.apache.httpcomponents</groupId>
+		           		<artifactId>httpclient</artifactId>
+		           		<version>4.5.2</version>
+		        	</dependency>
+		        	<dependency>
+		           		<groupId>org.apache.commons</groupId>
+		           		<artifactId>commons-compress</artifactId>
+		           		<version>1.13</version>
+		         	</dependency>
+		    	</dependencies>
+            </plugin>
+        </plugins>
+    </build>
+    
 </project>
